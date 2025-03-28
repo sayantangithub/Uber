@@ -235,3 +235,124 @@ Authorization: Bearer <token>
   "message": "Unauthorized"
 }
 ```
+
+# Captain API Documentation
+
+## Endpoint
+
+**POST /captain/register**
+
+## Description
+
+This endpoint allows a captain to register by providing required fields including vehicle details.
+Validation errors will result in a 400 status code response.
+
+## Request Body
+
+The JSON payload should follow the structure below:
+
+```json
+{
+  "fullname": {
+    "firstname": "John",
+    "lastname": "Doe"
+  },
+  "email": "john@example.com",
+  "password": "pass123",
+  "vehicle": {
+    "color": "Black",
+    "plate": "ABC123",
+    "capacity": 4,
+    "vehicleType": "car"
+  }
+}
+```
+
+## Response Types
+
+### Successful Response
+
+- **Status Code:** 201
+- **Response Body Type:**
+
+```json
+{
+  "captain": {
+    "_id": "string",
+    "fullname": {
+      "firstname": "string",
+      "lastname": "string"
+    },
+    "email": "string",
+    "status": "inactive",
+    "socketId": "string (optional)",
+    "vehicle": {
+      "color": "string",
+      "plate": "string",
+      "capacity": "number",
+      "vehicleType": "string",
+      "location": {
+        "lat": "number (optional)",
+        "lng": "number (optional)"
+      }
+    }
+  },
+  "token": "string"
+}
+```
+
+### Error Response (Captain Exists)
+
+- **Status Code:** 400
+- **Response Body Type:**
+
+```json
+{
+  "message": "Captain already exists"
+}
+```
+
+### Validation Error Response
+
+- **Status Code:** 400
+- **Response Body Type:**
+
+```json
+{
+  "errors": [
+    {
+      "msg": "string",
+      "param": "string",
+      "location": "string"
+    }
+  ]
+}
+```
+
+## Example of Successful Response
+
+```json
+{
+  "captain": {
+    "_id": "6123456789abcdef01234567",
+    "fullname": {
+      "firstname": "John",
+      "lastname": "Doe"
+    },
+    "email": "john@example.com",
+    "status": "inactive",
+    "socketId": "",
+    "vehicle": {
+      "color": "Black",
+      "plate": "ABC123",
+      "capacity": 4,
+      "vehicleType": "car",
+      "location": {
+        "lat": null,
+        "lng": null
+      }
+    }
+  },
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
