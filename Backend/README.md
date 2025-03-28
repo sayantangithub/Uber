@@ -238,102 +238,106 @@ Authorization: Bearer <token>
 
 # Captain API Documentation
 
-## Endpoint
+## Endpoint: Register Captain
 
 **POST /captain/register**
 
-## Description
-
-This endpoint allows a captain to register by providing required fields including vehicle details.
-Validation errors will result in a 400 status code response.
-
-## Request Body
-
-The JSON payload should follow the structure below:
+### Request Body
 
 ```json
 {
   "fullname": {
-    "firstname": "John",
-    "lastname": "Doe"
+    "firstname": "John", // required, min length: 3
+    "lastname": "Doe" // optional, min length: 3 if provided
   },
-  "email": "john@example.com",
-  "password": "pass123",
+  "email": "john@example.com", // required, must be valid email format
+  "password": "pass123", // required, min length: 6
   "vehicle": {
-    "color": "Black",
-    "plate": "ABC123",
-    "capacity": 4,
-    "vehicleType": "car"
+    "color": "Black", // required, min length: 3
+    "plate": "ABC123", // required, min length: 3
+    "capacity": 4, // required, min: 1
+    "vehicleType": "car" // required, enum: ["car", "motorcycle", "auto"]
   }
 }
 ```
 
-## Response Types
-
-### Successful Response
-
-- **Status Code:** 201
-- **Response Body Type:**
+### Response: Success (201)
 
 ```json
 {
   "captain": {
-    "_id": "string",
+    "_id": "6123456789abcdef01234567", // MongoDB generated ID
     "fullname": {
-      "firstname": "string",
-      "lastname": "string"
+      "firstname": "John",
+      "lastname": "Doe"
     },
-    "email": "string",
-    "status": "inactive",
-    "socketId": "string (optional)",
+    "email": "john@example.com",
+    "status": "inactive", // default status for new captains
+    "socketId": "", // optional, used for real-time updates
     "vehicle": {
-      "color": "string",
-      "plate": "string",
-      "capacity": "number",
-      "vehicleType": "string",
+      "color": "Black",
+      "plate": "ABC123",
+      "capacity": 4,
+      "vehicleType": "car",
       "location": {
-        "lat": "number (optional)",
-        "lng": "number (optional)"
+        // optional, for tracking
+        "lat": null,
+        "lng": null
       }
     }
   },
-  "token": "string"
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." // JWT token, expires in 24h
 }
 ```
 
-### Error Response (Captain Exists)
+## Endpoint: Login Captain
 
-- **Status Code:** 400
-- **Response Body Type:**
+**POST /captain/login**
+
+### Request Body
 
 ```json
 {
-  "message": "Captain already exists"
+  "email": "john@example.com", // required, must be valid email
+  "password": "pass123" // required, min length: 6
 }
 ```
 
-### Validation Error Response
-
-- **Status Code:** 400
-- **Response Body Type:**
-
-```json
-{
-  "errors": [
-    {
-      "msg": "string",
-      "param": "string",
-      "location": "string"
-    }
-  ]
-}
-```
-
-## Example of Successful Response
+### Response: Success (200)
 
 ```json
 {
   "captain": {
+    // same as register response
+  },
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." // JWT token, expires in 24h
+}
+```
+
+### Response: Error (401)
+
+```json
+{
+  "message": "Invalid email or password"
+}
+```
+
+## Endpoint: Get Captain Profile
+
+**GET /captain/profile**
+
+### Headers
+
+```
+Authorization: Bearer <token>    // JWT token required
+```
+
+### Response: Success (200)
+
+```json
+{
+  "captain": {
+    // same as register response without sensitive data
     "_id": "6123456789abcdef01234567",
     "fullname": {
       "firstname": "John",
@@ -341,7 +345,6 @@ The JSON payload should follow the structure below:
     },
     "email": "john@example.com",
     "status": "inactive",
-    "socketId": "",
     "vehicle": {
       "color": "Black",
       "plate": "ABC123",
@@ -352,7 +355,32 @@ The JSON payload should follow the structure below:
         "lng": null
       }
     }
-  },
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  }
+}
+```
+
+## Endpoint: Logout Captain
+
+**GET /captain/logout**
+
+### Headers
+
+```
+Authorization: Bearer <token>    // JWT token required
+```
+
+### Response: Success (200)
+
+```json
+{
+  "message": "Logout successfully"
+}
+```
+
+### Response: Error (401)
+
+```json
+{
+  "message": "Unauthorized" // Invalid or expired token
 }
 ```
