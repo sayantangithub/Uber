@@ -149,3 +149,89 @@ The JSON payload should follow the structure below:
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
 ```
+
+## Endpoint
+
+**GET /user/profile**
+
+## Description
+
+This endpoint returns the profile information of the authenticated user.  
+Requires authentication token in the request header or cookies.
+
+## Headers
+
+```
+Authorization: Bearer <token>
+```
+
+## Response Types
+
+### Successful Response
+
+- **Status Code:** 200
+- **Response Body Type:**
+
+```json
+{
+  "user": {
+    "_id": "string",
+    "fullname": {
+      "firstname": "string",
+      "lastname": "string"
+    },
+    "email": "string",
+    "socketId": "string (optional)"
+  }
+}
+```
+
+### Error Response (Unauthorized)
+
+- **Status Code:** 401
+- **Response Body Type:**
+
+```json
+{
+  "message": "Unauthorized"
+}
+```
+
+## Endpoint
+
+**GET /user/logout**
+
+## Description
+
+This endpoint logs out the user by invalidating their token.  
+Requires authentication token in the request header or cookies.
+
+## Headers
+
+```
+Authorization: Bearer <token>
+```
+
+## Response Types
+
+### Successful Response
+
+- **Status Code:** 200
+- **Response Body Type:**
+
+```json
+{
+  "message": "Logout success"
+}
+```
+
+### Error Response (Unauthorized)
+
+- **Status Code:** 401
+- **Response Body Type:**
+
+```json
+{
+  "message": "Unauthorized"
+}
+```
